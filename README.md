@@ -11,13 +11,12 @@
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8+-blue.svg)]()
 [![React 18+](https://img.shields.io/badge/React-18+-61dafb.svg)]()
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)]()
-[![Zero External Dependencies](https://img.shields.io/badge/Backend-Zero%20Dependencies-purple.svg)]()
 
 ---
 
 [Key Features](#-key-features) •
-[Quick Start](#-quick-start) •
-[Web Interface](#-web-interface) •
+[Installation & Download](#-installation--download-guide) •
+[Web Dashboard](#-web-dashboard) •
 [CLI Usage](#-cli-usage) •
 [Architecture](#-architecture) •
 [Privacy Guarantee](#-privacy--security-guarantee)
@@ -49,57 +48,78 @@ It automatically scans your local project folders, discovers historic commits pu
 
 ---
 
-## 🚀 Quick Start
+## 📥 Installation & Download Guide
 
-### Prerequisites
-- [Python 3.8+](https://www.python.org/)
-- [Node.js 18+](https://nodejs.org/) (for running the React Web UI)
-- [Git](https://git-scm.com/) installed locally
+### 📋 Prerequisites
+Before downloading, ensure you have installed:
+- [Python 3.8+](https://www.python.org/downloads/)
+- [Node.js 18+](https://nodejs.org/) (required only if you want to run the web UI)
+- [Git](https://git-scm.com/downloads)
 
 ---
 
-### 💻 1. Running via CLI (Command Line)
+### Step 1: Download DeadCode
 
-You can run the DeadCode engine instantly without starting any web server!
+Choose **Method A** (Git Clone) or **Method B** (Direct ZIP Download):
+
+#### **Method A: Clone via Git (Recommended)**
+Open your terminal (PowerShell, Command Prompt, or Terminal) and run:
+```bash
+git clone https://github.com/farhan0haris/Deadcode.git
+cd Deadcode
+```
+
+#### **Method B: Download ZIP File**
+1. Click the green **`Code`** button at the top of this repository page and select **`Download ZIP`**.
+2. Extract the downloaded `.zip` file.
+3. Open your terminal in the extracted folder:
+   ```bash
+   cd Deadcode-main
+   ```
+
+---
+
+### Step 2: Running DeadCode
+
+You can run DeadCode using either the **Terminal CLI** or the **Full Web UI**:
+
+#### 💻 **Option 1: Using the Terminal CLI (Instant & Zero-Setup)**
+No npm or web servers needed! Run directly in your terminal:
 
 ```bash
-# Clone the repository
-git clone https://github.com/YOUR_USERNAME/deadcode.git
-cd deadcode
-
-# Scan your local projects directory
+# 1. Scan your projects folder (replace with your actual code directory path)
 python backend/cli.py scan "C:\Users\YourName\Documents\Projects"
 
-# View historic "On This Day" commits
+# 2. View historic "On This Day" commits
 python backend/cli.py today
 
-# View overall developer statistics
+# 3. View overall developer statistics
 python backend/cli.py stats
 
-# Run system health check
+# 4. Verify system health & database status
 python backend/cli.py doctor
 ```
 
 ---
 
-### 🌐 2. Running the Glassmorphic Web App
+#### 🌐 **Option 2: Using the Web UI Dashboard**
 
-To launch the full visual dashboard:
-
-#### **Step A: Start Backend Server**
+##### **1. Start Backend API Server**
+Open Terminal 1:
 ```bash
 python backend/app/main.py
 ```
 *(Runs backend HTTP server on `http://127.0.0.1:8000`)*
 
-#### **Step B: Start Web UI**
-In a new terminal tab/window:
+##### **2. Start Web Interface**
+Open a **new** Terminal 2:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Open **`http://localhost:3000`** in your browser!
+
+Open **`http://localhost:3000`** in your web browser to explore your interactive dashboard!
 
 ---
 
@@ -119,32 +139,6 @@ Open **`http://localhost:3000`** in your browser!
 
 ---
 
-## 🏗️ Architecture
-
-```
-deadcode/
-├── backend/                  # Python Engine (Zero-Dependency Backend)
-│   ├── app/
-│   │   ├── main.py           # Standard Library HTTP API Server
-│   │   ├── scanner.py        # Subprocess-based Recursive Git Indexer
-│   │   ├── analytics.py      # Streak & Metric Calculation Engine
-│   │   ├── achievements.py   # Automated Badge Unlocker
-│   │   ├── db.py             # SQLite Schema (~/.deadcode/deadcode.db)
-│   │   └── export.py         # Multi-format Exporter
-│   └── cli.py                # Standalone Terminal Interface
-│
-└── frontend/                 # React Web App
-    ├── src/
-    │   ├── components/       # Glassmorphic UI, Diff Viewer & R3F 3D Canvas
-    │   ├── pages/            # 10 Responsive Dashboard & Feature Views
-    │   ├── api/              # TanStack Query Hooks & Client
-    │   └── types/            # TypeScript Type Definitions
-    ├── package.json
-    └── vite.config.ts
-```
-
----
-
 ## 🔒 Privacy & Security Guarantee
 
 - 🟢 **100% Offline:** Zero external API calls, tracking scripts, or cloud servers.
@@ -153,7 +147,7 @@ deadcode/
 
 ---
 
-## 🤝 How to Contribute
+## 🤝 Contributing
 
 Contributions are welcome! Feel free to report issues, submit feature requests, or send pull requests.
 
