@@ -135,6 +135,69 @@ Open **`http://localhost:3000`** in your web browser to explore your interactive
 
 ---
 
+## ⚙️ Environment Configuration & Setup
+
+DeadCode works **100% offline out-of-the-box** using SQLite and default parameters. Optional cloud database and GitHub OAuth support can be configured via environment variables.
+
+### Step 1: Copy `.env.example` to `.env`
+```bash
+cp .env.example .env
+```
+
+### 🔑 GitHub OAuth Credentials Setup
+If you need GitHub OAuth integration:
+1. Navigate to **[GitHub Developer Settings](https://github.com/settings/developers)**.
+2. Click **New OAuth App**.
+3. Fill in the application metadata:
+   - **Application Name:** `DeadCode`
+   - **Homepage URL:** `http://localhost:3000`
+   - **Authorization Callback URL:** `http://localhost:3000/api/auth/callback/github`
+4. Click **Register Application**.
+5. Copy your **Client ID** and generate a new **Client Secret**.
+6. Set the values in `.env`:
+   ```env
+   GITHUB_CLIENT_ID=your_client_id_here
+   GITHUB_CLIENT_SECRET=your_client_secret_here
+   GITHUB_CALLBACK_URL=http://localhost:3000/api/auth/callback/github
+   ```
+*(Note: If OAuth credentials are not provided, DeadCode runs in local offline mode without breaking building or running).*
+
+---
+
+### 🐘 PostgreSQL Database Setup (`DATABASE_URL`)
+
+By default, DeadCode uses a local zero-setup SQLite database (`~/.deadcode/deadcode.db`). If PostgreSQL is desired or SQLite is unavailable, configure `DATABASE_URL` in `.env`:
+
+```env
+DATABASE_URL=postgresql://<USER>:<PASSWORD>@<HOST>:<PORT>/<DATABASE>?sslmode=require
+```
+
+#### Provider Setup Guides:
+
+* **Neon (Serverless Postgres):**
+  1. Create a project at [neon.tech](https://neon.tech).
+  2. Copy the Connection String from your dashboard.
+  3. Set `DATABASE_URL=postgresql://user:pass@ep-xyz.neon.tech/neondb?sslmode=require`.
+
+* **Supabase:**
+  1. Create a project at [supabase.com](https://supabase.com).
+  2. Go to **Project Settings -> Database** and find your Connection Pooling string.
+  3. Set `DATABASE_URL=postgresql://postgres.ref:password@aws-0-region.pooler.supabase.com:6543/postgres`.
+
+* **Railway:**
+  1. Provision a PostgreSQL service on [railway.app](https://railway.app).
+  2. Copy `DATABASE_URL` from **Variables**.
+  3. Set `DATABASE_URL=postgresql://postgres:password@host.railway.app:5432/railway`.
+
+* **Local PostgreSQL:**
+  1. Ensure local PostgreSQL server is running.
+  2. Create a database: `createdb deadcode`
+  3. Set `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/deadcode`.
+
+*(Note: Install `psycopg2-binary` if using PostgreSQL: `pip install psycopg2-binary`)*
+
+---
+
 ## 🖥️ Web Interface Overview
 
 | View | Description |
