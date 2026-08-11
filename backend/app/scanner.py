@@ -10,10 +10,12 @@ def find_git_repositories(root_path: str) -> List[str]:
     git_repos = []
     try:
         for dirpath, dirnames, filenames in os.walk(root_path):
-            dirnames[:] = [d for d in dirnames if d not in IGNORE_DIRS]
             if ".git" in dirnames:
                 git_repos.append(dirpath)
                 dirnames.remove(".git")
+            
+            # Prune other ignore dirs from further recursion
+            dirnames[:] = [d for d in dirnames if d not in IGNORE_DIRS]
     except Exception as e:
         print(f"Error walking path {root_path}: {e}")
     return git_repos
