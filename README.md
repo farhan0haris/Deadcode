@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/images/banner.jpg" alt="DeadCode Banner" width="100%" />
+
 # 💀 DeadCode
 
 ### *Every commit has a ghost.*
@@ -20,6 +22,16 @@
 [CLI Usage](#-cli-usage) •
 [Architecture](#-architecture) •
 [Privacy Guarantee](#-privacy--security-guarantee)
+
+</div>
+
+---
+
+## 📸 Interface Preview
+
+<div align="center">
+
+<img src="docs/images/dashboard_preview.jpg" alt="DeadCode Dashboard Preview" width="100%" style="border-radius: 12px; border: 1px solid #27272A;" />
 
 </div>
 
