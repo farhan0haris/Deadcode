@@ -1,0 +1,25 @@
+# Node / Frontend Dependencies
+node_modules/
+frontend/node_modules/
+dist/
+build/
+.npm/
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+.env
+
+# Application Local Database
+.deadcode/
+*.db
+*.sqlite3
+
+# IDEs & System Files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
