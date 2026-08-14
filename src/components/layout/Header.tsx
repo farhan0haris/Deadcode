@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { RefreshCw, Search, Bell, ShieldCheck, Command, Home, ChevronRight } from "lucide-react";
 import CommandPaletteModal from "@/components/ui/CommandPaletteModal";
+import { triggerGitHubSync, getStoredSyncData } from "@/lib/githubSync";
 
 export default function Header() {
   const pathname = usePathname();
@@ -31,11 +32,12 @@ export default function Header() {
   const handleSync = async () => {
     setIsSyncing(true);
     try {
-      await fetch("/api/sync", { method: "POST" });
+      const existing = getStoredSyncData();
+      await triggerGitHubSync(existing?.user?.login);
     } catch {
-      // Graceful catch for offline mode
+      // Graceful fallback
     } finally {
-      setTimeout(() => setIsSyncing(false), 1200);
+      setTimeout(() => setIsSyncing(false), 800);
     }
   };
 
@@ -94,7 +96,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <div className="hidden items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold text-emerald-400 lg:flex">
             <ShieldCheck className="h-3.5 w-3.5" />
-            <span>Cloud Synced</span>
+            <span>GitHub Sync Active</span>
           </div>
 
           <button
