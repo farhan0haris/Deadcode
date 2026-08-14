@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, GitCommit, Plus, Minus, Filter, Sparkles } from "lucide-react";
+import { Plus, Minus, Filter, Sparkles } from "lucide-react";
 
 const mockMemories = [
   {
@@ -50,20 +50,20 @@ export default function OnThisDayPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-2 text-violet-400 mb-1">
+          <div className="flex items-center gap-2 text-[#74B4D9] mb-1">
             <Sparkles className="h-4 w-4" />
-            <span className="text-xs font-semibold uppercase tracking-wider">
+            <span className="text-xs font-black uppercase tracking-wider">
               Time Machine
             </span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-white">
+          <h1 className="text-3xl font-black tracking-tight text-[#EBEBEB]">
             On This Day
           </h1>
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-[#EBEBEB]/70 font-medium">
             Commits pushed on this exact day in previous years of your coding journey.
           </p>
         </div>
-        <button className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/60 px-4 py-2 text-xs font-medium text-zinc-300 hover:bg-zinc-800">
+        <button className="flex items-center gap-2 rounded-xl border border-[#74B4D9]/25 bg-[#74B4D9]/10 px-4 py-2 text-xs font-bold text-[#74B4D9] shadow-sm transition-all hover:bg-[#74B4D9]/20">
           <Filter className="h-3.5 w-3.5" />
           <span>Filter Years</span>
         </button>
@@ -78,37 +78,37 @@ export default function OnThisDayPage() {
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
-                <span className="rounded-xl bg-violet-950 px-3 py-1 text-xs font-bold text-violet-300 border border-violet-800/40">
+                <span className="rounded-xl bg-[#10367D] border border-[#74B4D9]/30 px-3 py-1 text-xs font-bold text-[#EBEBEB] shadow-sm">
                   {memory.yearAgo} Year{memory.yearAgo > 1 ? "s" : ""} Ago
                 </span>
-                <span className="text-xs font-medium text-zinc-400">
+                <span className="text-xs font-semibold text-[#EBEBEB]/70">
                   {memory.date}
                 </span>
               </div>
-              <span className="font-mono text-xs text-zinc-400">
-                Repo: <strong className="text-zinc-200">{memory.repo}</strong>
+              <span className="font-mono text-xs text-[#EBEBEB]/70">
+                Repo: <strong className="text-[#74B4D9] font-bold">{memory.repo}</strong>
               </span>
             </div>
 
-            <h3 className="mt-4 text-base font-bold text-white">
+            <h3 className="mt-4 text-base font-extrabold text-[#EBEBEB]">
               {memory.commitMsg}
             </h3>
 
-            <div className="mt-4 flex items-center justify-between pt-3 border-t border-zinc-800/60">
+            <div className="mt-4 flex items-center justify-between pt-3 border-t border-[#74B4D9]/15">
               <div className="flex items-center gap-4 text-xs">
-                <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+                <span className="flex items-center gap-1 text-emerald-400 font-bold">
                   <Plus className="h-3.5 w-3.5" /> +{memory.additions}
                 </span>
-                <span className="flex items-center gap-1 text-rose-400 font-semibold">
+                <span className="flex items-center gap-1 text-rose-400 font-bold">
                   <Minus className="h-3.5 w-3.5" /> -{memory.deletions}
                 </span>
-                <span className="text-zinc-500">{memory.files} files changed</span>
+                <span className="text-[#EBEBEB]/60 font-medium">{memory.files} files changed</span>
               </div>
               <button
                 onClick={() =>
                   setOpenDiffId(openDiffId === memory.id ? null : memory.id)
                 }
-                className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
+                className="text-xs font-bold text-[#74B4D9] underline hover:opacity-80 transition-opacity"
               >
                 {openDiffId === memory.id ? "Close Diff" : "Inspect Diff"}
               </button>
@@ -116,7 +116,7 @@ export default function OnThisDayPage() {
 
             {/* Diff Viewer */}
             {openDiffId === memory.id && (
-              <div className="mt-4 rounded-xl border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs leading-relaxed text-zinc-300 overflow-x-auto">
+              <div className="mt-4 rounded-xl border border-[#74B4D9]/30 bg-[#061229] p-4 font-mono text-xs leading-relaxed text-[#EBEBEB] overflow-x-auto shadow-inner">
                 <pre>{memory.diff}</pre>
               </div>
             )}

@@ -18,16 +18,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen bg-zinc-50 text-zinc-900 antialiased transition-colors dark:bg-zinc-950 dark:text-zinc-100 selection:bg-violet-500/30 selection:text-violet-200">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+    <html lang="en" suppressHydrationWarning className="dark">
+      <body className="min-h-screen bg-[#091836] text-[#EBEBEB] antialiased selection:bg-[#74B4D9]/30 selection:text-[#EBEBEB]">
+        <ThemeProvider attribute="class" forcedTheme="dark">
           <AuthProvider>
             <BackgroundCanvas />
-            <div className="relative z-10 flex min-h-screen">
+            <div className="relative z-10 flex min-h-screen bg-[#091836] text-[#EBEBEB]">
               <Sidebar />
               <div className="flex flex-1 flex-col">
                 <Header />
-                <main className="flex-1 transition-all">{children}</main>
+                <main className="flex-1">{children}</main>
               </div>
             </div>
           </AuthProvider>

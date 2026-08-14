@@ -2,46 +2,50 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-  }
-
-  .dark {
-    --background: 240 10% 4%;
-    --foreground: 0 0% 98%;
+    --background: #091836;
+    --foreground: #EBEBEB;
+    --royal-blue: #10367D;
+    --light-grey: #EBEBEB;
+    --sky-blue: #74B4D9;
   }
 
   body {
-    transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: #091836;
+    color: #EBEBEB;
     overflow-x: hidden;
+    min-height: 100vh;
   }
 }
 
-/* Glassmorphism Panel Tokens for Dark and Light Themes */
+/* Glassmorphism Panel Tokens for Royal Blue (#10367D), Sky Blue (#74B4D9), and Light Grey (#EBEBEB) */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(228, 228, 231, 0.8);
-  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
-}
-
-.dark .glass-panel {
-  background: rgba(18, 18, 22, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.4);
+  background: rgba(13, 36, 82, 0.75) !important;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(116, 180, 217, 0.2) !important;
+  box-shadow: 0 12px 40px -8px rgba(3, 10, 26, 0.8);
+  color: #EBEBEB !important;
 }
 
 .glass-panel-hover {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-panel-hover:hover {
-  transform: translateY(-2px);
-  border-color: rgba(124, 92, 252, 0.4);
-  box-shadow: 0 12px 36px -8px rgba(124, 92, 252, 0.2);
+  transform: translateY(-3px);
+  border-color: rgba(116, 180, 217, 0.5) !important;
+  box-shadow: 0 16px 44px -8px rgba(16, 54, 125, 0.6), 0 0 24px -2px rgba(116, 180, 217, 0.25);
+}
+
+/* Gradient Utility Helpers */
+.bg-royal-gradient {
+  background: linear-gradient(135deg, #10367D 0%, #1d52b5 50%, #74B4D9 100%);
+}
+
+.text-gradient-sky {
+  background: linear-gradient(135deg, #EBEBEB 0%, #74B4D9 50%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Custom Scrollbar */
@@ -55,18 +59,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d4d4d8;
+  background: rgba(116, 180, 217, 0.3);
   border-radius: 9999px;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: #27272a;
-}
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1aa;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: rgba(116, 180, 217, 0.6);
 }

@@ -1,26 +1,26 @@
 <div align="center">
 
-<img src="docs/images/banner.jpg" alt="DeadCode Banner" width="100%" />
+<img src="docs/images/banner.jpg" alt="DeadCode Banner" width="100%" style="border-radius: 14px;" />
 
-# 💀 DeadCode
+# 💀 DeadCode v2.0 (Cloud & Offline Edition)
 
 ### *Every commit has a ghost.*
 
-**A privacy-first, 100% offline Git time machine and developer journey visualizer.**
+**A privacy-first developer time machine, repository memory stream, and journey visualizer.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Privacy First](https://img.shields.io/badge/Privacy-100%25%20Offline-emerald.svg)]()
-[![Python 3.8+](https://img.shields.io/badge/Python-3.8+-blue.svg)]()
-[![React 18+](https://img.shields.io/badge/React-18+-61dafb.svg)]()
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Privacy First](https://img.shields.io/badge/Privacy-100%25%20Offline%20or%20Cloud-10367D.svg)]()
+[![Next.js 16](https://img.shields.io/badge/Next.js-16.3%20App%20Router-74B4D9.svg)]()
+[![TypeScript 5](https://img.shields.io/badge/TypeScript-5.0+-EBEBEB.svg)]()
+[![Python 3.10+](https://img.shields.io/badge/Python-FastAPI%20Engine-10367D.svg)]()
 
 ---
 
 [Key Features](#-key-features) •
-[Installation & Download](#-installation--download-guide) •
-[Web Dashboard](#-web-dashboard) •
-[CLI Usage](#-cli-usage) •
-[Architecture](#-architecture) •
+[Quickstart & Installation](#-quickstart--installation) •
+[Web Interface](#-web-interface) •
+[GitHub OAuth & Database Setup](#-github-oauth--database-setup) •
+[CLI Commands](#-cli-usage) •
 [Privacy Guarantee](#-privacy--security-guarantee)
 
 </div>
@@ -31,7 +31,7 @@
 
 <div align="center">
 
-<img src="docs/images/dashboard_preview.jpg" alt="DeadCode Dashboard Preview" width="100%" style="border-radius: 12px; border: 1px solid #27272A;" />
+<img src="docs/images/dashboard_preview.jpg" alt="DeadCode Dashboard Preview" width="100%" style="border-radius: 14px; border: 1px solid rgba(116, 180, 217, 0.3);" />
 
 </div>
 
@@ -39,201 +39,130 @@
 
 ## 📖 Overview
 
-**DeadCode** is an open-source local desktop visualizer and Command Line Interface (CLI) that turns your raw Git history into a personal memory bank and interactive dashboard.
+**DeadCode** is an open-source Git time machine and developer analytics platform that turns your raw commit history into an interactive memory bank.
 
-Think of it as **Apple Journal + GitHub + Spotify Wrapped** combined into a single, offline developer experience.
+Think of it as **Apple Journal + GitHub + Spotify Wrapped** combined into a unified, privacy-first developer console.
 
-It automatically scans your local project folders, discovers historic commits pushed on this exact day over past years (*"On This Day"*), calculates streak dynamics, maps language evolution over time, and unlocks automated achievement trophies based on your real coding habits.
+It automatically indexes your repositories, discovers historic commits pushed on this exact day over past years (*"On This Day"*), tracks streak dynamics, visualizes multi-year language evolution, and unlocks trophies based on your real coding habits.
 
 ---
 
 ## 🌟 Key Features
 
-- 🕰️ **On This Day Memories:** Rediscover code you wrote 1, 2, 3, 5, or 10+ years ago today.
-- 📂 **Multi-Directory Git Scanner:** Recursively indexes local project folders while skipping build artifacts (`node_modules`, `dist`, `.cache`, `vendor`).
-- 📊 **Comprehensive Analytics:** Computes total lines added/removed, active/longest streaks, most productive days, and night-owl coding percentages.
-- 🏆 **Automated Achievements:** Unlocks local trophies like *First Commit*, *Night Owl*, *Refactor Master*, and *Polyglot*.
-- 🔍 **Instant Search & Diff Viewer:** Full text search across all indexed commits with colorized line additions and deletions.
-- 🌌 **3D Ambient Experience:** Glassmorphic dark UI featuring a subtle 60 FPS React Three Fiber Git constellation particle background.
-- 💻 **Standalone CLI:** Zero-dependency terminal application (`deadcode scan`, `deadcode today`, `deadcode stats`, `deadcode doctor`).
-- 📤 **Multi-Format Export:** One-click exporter to Markdown (perfect for GitHub Profile READMEs), HTML, JSON, and CSV.
+- 🕰️ **On This Day Memories:** Rediscover code you committed 1, 2, 3, 5, or 10+ years ago today with line-by-line diff inspectors.
+- 📂 **Multi-Repo Explorer & Local Scanner:** Recursively indexes local repository folders or syncs with your GitHub account.
+- 📊 **Contribution Heatmap Calendar:** 52-week GitHub-style activity grid generated from your real commit logs.
+- 🏆 **Automated Achievements:** Unlocks trophies for milestones (*Night Owl*, *Refactor Titan*, *First Push*, *Streak Master*).
+- 🔍 **Instant Commit Search:** Fast full-text search across commit messages, repositories, files, and branches.
+- ⚙️ **Comprehensive User Settings:** Custom profile management, GitHub Personal Access Token (PAT) encryption, PostgreSQL connection testing, and notification controls.
+- 🔐 **Dual Auth Suite:** GitHub OAuth and email credentials login with 1-Click Guest Demo mode.
+- 📤 **Multi-Format Export:** Download your developer journey in **JSON**, **CSV**, or **Markdown** (ideal for GitHub Profile READMEs).
+- 🌌 **3D Ambient Experience:** Sleek Royal Blue (`#10367D`), Sky Blue (`#74B4D9`), and Light Grey (`#EBEBEB`) glassmorphic console with React Three Fiber 3D particles.
 
 ---
 
-## 📥 Installation & Download Guide
+## 📥 Quickstart & Installation
 
-### 📋 Prerequisites
-Before downloading, ensure you have installed:
-- [Python 3.8+](https://www.python.org/downloads/)
-- [Node.js 18+](https://nodejs.org/) (required only if you want to run the web UI)
-- [Git](https://git-scm.com/downloads)
+### Prerequisites
+Ensure you have installed:
+- **Node.js 18+** & **npm**
+- **Python 3.8+** (for Python backend scanner & CLI)
+- **Git**
 
 ---
 
-### Step 1: Download DeadCode
-
-Choose **Method A** (Git Clone) or **Method B** (Direct ZIP Download):
-
-#### **Method A: Clone via Git (Recommended)**
-Open your terminal (PowerShell, Command Prompt, or Terminal) and run:
+### Step 1: Clone Repository
 ```bash
 git clone https://github.com/farhan0haris/Deadcode.git
 cd Deadcode
 ```
 
-#### **Method B: Download ZIP File**
-1. Click the green **`Code`** button at the top of this repository page and select **`Download ZIP`**.
-2. Extract the downloaded `.zip` file.
-3. Open your terminal in the extracted folder:
-   ```bash
-   cd Deadcode-main
-   ```
+---
+
+### Step 2: Install Dependencies & Run Web App
+```bash
+npm install
+npm run dev
+```
+
+Open **[http://localhost:3000](http://localhost:3000)** in your browser to access the dashboard!
 
 ---
 
-### Step 2: Running DeadCode
-
-You can run DeadCode using either the **Terminal CLI** or the **Full Web UI**:
-
-#### 💻 **Option 1: Using the Terminal CLI (Instant & Zero-Setup)**
-No npm or web servers needed! Run directly in your terminal:
-
+### Step 3: Run Python CLI (Optional)
 ```bash
-# 1. Scan your projects folder (replace with your actual code directory path)
+# Scan local repository folder
 python backend/cli.py scan "C:\Users\YourName\Documents\Projects"
 
-# 2. View historic "On This Day" commits
+# Check On This Day memories
 python backend/cli.py today
 
-# 3. View overall developer statistics
+# View developer metrics
 python backend/cli.py stats
 
-# 4. Verify system health & database status
+# System doctor & health check
 python backend/cli.py doctor
 ```
 
 ---
 
-#### 🌐 **Option 2: Using the Web UI Dashboard**
+## 🔑 GitHub OAuth & Database Setup
 
-##### **1. Start Backend API Server**
-Open Terminal 1:
-```bash
-python backend/app/main.py
-```
-*(Runs backend HTTP server on `http://127.0.0.1:8000`)*
+DeadCode works **100% offline out-of-the-box** with local SQLite storage (`~/.deadcode/deadcode.db`). To enable real GitHub login or cloud database sync:
 
-##### **2. Start Web Interface**
-Open a **new** Terminal 2:
+### 1. Copy Environment Template
 ```bash
-cd frontend
-npm install
-npm run dev
+cp .env.example .env.local
 ```
 
-Open **`http://localhost:3000`** in your web browser to explore your interactive dashboard!
-
----
-
-## ⚙️ Environment Configuration & Setup
-
-DeadCode works **100% offline out-of-the-box** using SQLite and default parameters. Optional cloud database and GitHub OAuth support can be configured via environment variables.
-
-### Step 1: Copy `.env.example` to `.env`
-```bash
-cp .env.example .env
-```
-
-### 🔑 GitHub OAuth Credentials Setup
-If you need GitHub OAuth integration:
-1. Navigate to **[GitHub Developer Settings](https://github.com/settings/developers)**.
+### 2. Configure GitHub OAuth
+1. Open [GitHub Developer Settings](https://github.com/settings/developers).
 2. Click **New OAuth App**.
-3. Fill in the application metadata:
-   - **Application Name:** `DeadCode`
-   - **Homepage URL:** `http://localhost:3000`
-   - **Authorization Callback URL:** `http://localhost:3000/api/auth/callback/github`
-4. Click **Register Application**.
-5. Copy your **Client ID** and generate a new **Client Secret**.
-6. Set the values in `.env`:
-   ```env
-   GITHUB_CLIENT_ID=your_client_id_here
-   GITHUB_CLIENT_SECRET=your_client_secret_here
-   GITHUB_CALLBACK_URL=http://localhost:3000/api/auth/callback/github
-   ```
-*(Note: If OAuth credentials are not provided, DeadCode runs in local offline mode without breaking building or running).*
-
----
-
-### 🐘 PostgreSQL Database Setup (`DATABASE_URL`)
-
-By default, DeadCode uses a local zero-setup SQLite database (`~/.deadcode/deadcode.db`). If PostgreSQL is desired or SQLite is unavailable, configure `DATABASE_URL` in `.env`:
-
+3. Set **Homepage URL** to `http://localhost:3000`.
+4. Set **Authorization Callback URL** to `http://localhost:3000/api/auth/callback/github`.
+5. Copy your **Client ID** & **Client Secret** into `.env.local`:
 ```env
-DATABASE_URL=postgresql://<USER>:<PASSWORD>@<HOST>:<PORT>/<DATABASE>?sslmode=require
+GITHUB_ID=your_client_id_here
+GITHUB_SECRET=your_client_secret_here
+NEXTAUTH_SECRET=your_32_char_secret_key_here
 ```
 
-#### Provider Setup Guides:
-
-* **Neon (Serverless Postgres):**
-  1. Create a project at [neon.tech](https://neon.tech).
-  2. Copy the Connection String from your dashboard.
-  3. Set `DATABASE_URL=postgresql://user:pass@ep-xyz.neon.tech/neondb?sslmode=require`.
-
-* **Supabase:**
-  1. Create a project at [supabase.com](https://supabase.com).
-  2. Go to **Project Settings -> Database** and find your Connection Pooling string.
-  3. Set `DATABASE_URL=postgresql://postgres.ref:password@aws-0-region.pooler.supabase.com:6543/postgres`.
-
-* **Railway:**
-  1. Provision a PostgreSQL service on [railway.app](https://railway.app).
-  2. Copy `DATABASE_URL` from **Variables**.
-  3. Set `DATABASE_URL=postgresql://postgres:password@host.railway.app:5432/railway`.
-
-* **Local PostgreSQL:**
-  1. Ensure local PostgreSQL server is running.
-  2. Create a database: `createdb deadcode`
-  3. Set `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/deadcode`.
-
-*(Note: Install `psycopg2-binary` if using PostgreSQL: `pip install psycopg2-binary`)*
+### 3. Connect PostgreSQL Database (Optional)
+To use a managed cloud database (Neon, Supabase, Railway, etc.):
+```env
+DATABASE_URL=postgresql://user:password@ep-cold-lake-8921.neon.tech/deadcode?sslmode=require
+```
 
 ---
 
-## 🖥️ Web Interface Overview
+## 🖥️ Web Navigation Overview
 
-| View | Description |
-| :--- | :--- |
-| **Command Center (Dashboard)** | Overview of total repos, commits, streak counters, and primary language breakdown. |
-| **On This Day** | Time machine cards displaying past year commits with quick diff expanders. |
-| **Repository Explorer** | Grid/list explorer for all indexed projects with folder scanner trigger & pin toggle. |
-| **Visual Timeline** | Recharts 30-day activity graph and streak counters. |
-| **Language Evolution** | Tech stack evolution and repository language distribution bars. |
-| **Developer Journey** | Historic timeline of key milestones (First Repo, Century Commit, Refactor Titan). |
-| **Trophies & Badges** | Grid of unlocked automated coding achievements. |
-| **Instant Search** | Fast filter across commit messages, repo names, branches, and authors. |
-| **Report Exporter** | Export metrics to Markdown, HTML, JSON, or CSV. |
+| View | Path | Description |
+| :--- | :--- | :--- |
+| **Home** | `/` | Landing page with product highlights and quick sign-in. |
+| **Command Center** | `/dashboard` | Overall statistics, repositories count, commit counter, and language donut chart. |
+| **On This Day** | `/today` | Time machine memory stream with line-by-line diff inspector. |
+| **Repositories** | `/repos` | Multi-repository explorer with instant filtering and public/private badges. |
+| **Commit Timeline** | `/timeline` | Interactive 30-day activity intensity chart. |
+| **Language Evolution** | `/languages` | Historical distribution and stack adoption bars. |
+| **Heatmap Calendar** | `/heatmap` | 52-week GitHub-style commit frequency heatmap. |
+| **Achievements** | `/achievements` | Automated trophies unlocked by your coding habits. |
+| **Yearly Wrapped** | `/wrapped` | Interactive yearly retrospective slideshow. |
+| **Instant Search** | `/search` | Full-text commit and author search. |
+| **User Settings** | `/settings` | Profile editor, security credentials, database tester, and data export. |
+| **Public Profile** | `/profile/[username]` | Shareable developer identity card. |
+| **Auth Portal** | `/login` & `/register` | Sign In, Register, GitHub OAuth, and 1-Click Guest Demo mode. |
 
 ---
 
 ## 🔒 Privacy & Security Guarantee
 
-- 🟢 **100% Offline:** Zero external API calls, tracking scripts, or cloud servers.
-- 🟢 **Read-Only Operations:** DeadCode only reads Git logs via `git log`. It will **never** modify, commit, push, or alter your repositories.
-- 🟢 **Local Storage:** All metadata is saved locally on your machine in `~/.deadcode/deadcode.db`.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to report issues, submit feature requests, or send pull requests.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+- 🟢 **Zero Telemetry:** DeadCode does not track, collect, or transmit your source code.
+- 🟢 **Read-Only Operations:** DeadCode only reads Git commit metadata via `git log`. It never alters, commits, pushes, or modifies your repositories.
+- 🟢 **Local & Cloud Choice:** Keep your data 100% on your machine using SQLite, or connect your own private PostgreSQL instance.
 
 ---
 
 ## 📄 License
 
-Distributed under the **MIT License**. See `LICENSE` for more information.
+Distributed under the **MIT License**. Created by [Farhan Haris](https://github.com/farhan0haris).
