@@ -1,45 +1,64 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft, ArrowRight, Ghost, Award, Flame, Code2 } from "lucide-react";
-
-const slides = [
-  {
-    title: "Your 2026 Developer Wrapped",
-    subtitle: "Let's take a look back at everything you built this year.",
-    stat: "14,291 Commits",
-    highlight: "Top 1% Global Activity",
-    icon: Ghost,
-    color: "from-[#10367D] to-[#1d52b5]",
-  },
-  {
-    title: "Your Weapon of Choice",
-    subtitle: "You wrote more TypeScript this year than anything else.",
-    stat: "89,420 Lines of TS",
-    highlight: "TypeScript Wizard",
-    icon: Code2,
-    color: "from-[#10367D] to-[#74B4D9]",
-  },
-  {
-    title: "Unstoppable Momentum",
-    subtitle: "You didn't break your commit streak for 19 days straight.",
-    stat: "19-Day Fire Streak",
-    highlight: "Flame Keeper",
-    icon: Flame,
-    color: "from-[#1d52b5] to-[#74B4D9]",
-  },
-  {
-    title: "Night Owl Persona",
-    subtitle: "42% of your total commits were pushed between 10 PM and 4 AM.",
-    stat: "Night Owl Developer",
-    highlight: "Code Ghost 💀",
-    icon: Award,
-    color: "from-[#10367D] to-[#091836]",
-  },
-];
+import { useState, useEffect } from "react";
+import { ArrowLeft, ArrowRight, Ghost, Award, Flame, Code2, FolderGit2, Star } from "lucide-react";
+import { getStoredSyncData, FullSyncData } from "@/lib/githubSync";
 
 export default function WrappedPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [syncData, setSyncData] = useState<FullSyncData | null>(null);
+
+  useEffect(() => {
+    const data = getStoredSyncData();
+    if (data) setSyncData(data);
+
+    const handleUpdate = () => setSyncData(getStoredSyncData());
+    window.addEventListener("deadcode_sync_updated", handleUpdate);
+    return () => window.removeEventListener("deadcode_sync_updated", handleUpdate);
+  }, []);
+
+  const totalRepos = syncData?.stats.reposCount || 6;
+  const primaryTech = syncData?.stats.primaryTech || "TypeScript";
+  const primaryPercent = syncData?.stats.primaryPercent || 67;
+  const totalStars = syncData?.stats.totalStars || 0;
+  const streakDays = syncData?.stats.streakDays || 13;
+  const username = syncData?.user.name || syncData?.user.login || "Developer";
+
+  const slides = [
+    {
+      title: `${username}'s 2026 Wrapped`,
+      subtitle: "Let's take a look back at your active GitHub journey and codebase evolution.",
+      stat: `${totalRepos} Active Repositories`,
+      highlight: `${totalRepos >= 5 ? "Prolific Creator" : "Active Builder"} 🚀`,
+      icon: FolderGit2,
+      color: "from-[#10367D] to-[#1d52b5]",
+    },
+    {
+      title: "Your Weapon of Choice",
+      subtitle: `You built the majority of your projects with ${primaryTech}.`,
+      stat: `${primaryPercent}% ${primaryTech}`,
+      highlight: `${primaryTech} Architect ⚡`,
+      icon: Code2,
+      color: "from-[#10367D] to-[#74B4D9]",
+    },
+    {
+      title: "Unstoppable Momentum",
+      subtitle: "You maintained continuous coding activity and push velocity.",
+      stat: `${streakDays}-Day Activity Streak`,
+      highlight: "Flame Keeper 🔥",
+      icon: Flame,
+      color: "from-[#1d52b5] to-[#74B4D9]",
+    },
+    {
+      title: "Developer Archetype",
+      subtitle: `From repositories like ${syncData?.repos[0]?.name || "Deadcode"}, your open source presence is evolving.`,
+      stat: `${totalStars} Stars Earned`,
+      highlight: "Code Ghost 💀",
+      icon: Award,
+      color: "from-[#10367D] to-[#091836]",
+    },
+  ];
+
   const slide = slides[currentSlide];
   const Icon = slide.icon;
 

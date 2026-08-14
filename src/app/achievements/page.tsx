@@ -1,43 +1,60 @@
 "use client";
 
-import { Award, Flame, Moon, Code2, Trophy } from "lucide-react";
-
-const achievements = [
-  {
-    id: "1",
-    title: "First Commit",
-    description: "Pushed your very first repository to Git.",
-    icon: Trophy,
-    unlocked: true,
-    progress: 100,
-  },
-  {
-    id: "2",
-    title: "Night Owl",
-    description: "Pushed over 50 commits past midnight.",
-    icon: Moon,
-    unlocked: true,
-    progress: 100,
-  },
-  {
-    id: "3",
-    title: "Refactor Titan",
-    description: "Deleted more than 10,000 lines of legacy code.",
-    icon: Flame,
-    unlocked: true,
-    progress: 100,
-  },
-  {
-    id: "4",
-    title: "Polyglot Master",
-    description: "Wrote code in 5 or more different programming languages.",
-    icon: Code2,
-    unlocked: false,
-    progress: 80,
-  },
-];
+import { useEffect, useState } from "react";
+import { Award, Flame, Moon, Code2, Trophy, FolderGit2 } from "lucide-react";
+import { getStoredSyncData, FullSyncData } from "@/lib/githubSync";
 
 export default function AchievementsPage() {
+  const [syncData, setSyncData] = useState<FullSyncData | null>(null);
+
+  useEffect(() => {
+    const data = getStoredSyncData();
+    if (data) setSyncData(data);
+
+    const handleUpdate = () => setSyncData(getStoredSyncData());
+    window.addEventListener("deadcode_sync_updated", handleUpdate);
+    return () => window.removeEventListener("deadcode_sync_updated", handleUpdate);
+  }, []);
+
+  const reposCount = syncData?.stats.reposCount || 6;
+  const langCount = syncData?.languages.length || 3;
+  const streak = syncData?.stats.streakDays || 13;
+
+  const achievements = [
+    {
+      id: "1",
+      title: "First Repository",
+      description: "Pushed your first public project to GitHub.",
+      icon: Trophy,
+      unlocked: reposCount >= 1,
+      progress: Math.min(reposCount * 100, 100),
+    },
+    {
+      id: "2",
+      title: "Multi-Project Builder",
+      description: `Created and indexed 5+ distinct code repositories (${reposCount}/5).`,
+      icon: FolderGit2,
+      unlocked: reposCount >= 5,
+      progress: Math.min(Math.round((reposCount / 5) * 100), 100),
+    },
+    {
+      id: "3",
+      title: "Active Momentum Streak",
+      description: `Maintained continuous coding and commit streak (${streak}/14 days).`,
+      icon: Flame,
+      unlocked: streak >= 7,
+      progress: Math.min(Math.round((streak / 14) * 100), 100),
+    },
+    {
+      id: "4",
+      title: "Polyglot Developer",
+      description: `Wrote projects across 3+ programming languages (${langCount}/3).`,
+      icon: Code2,
+      unlocked: langCount >= 3,
+      progress: Math.min(Math.round((langCount / 3) * 100), 100),
+    },
+  ];
+
   return (
     <div className="space-y-8 p-8 pl-72">
       <div>
@@ -45,7 +62,7 @@ export default function AchievementsPage() {
           Achievements & Badges
         </h1>
         <p className="text-xs text-[#EBEBEB]/70 font-medium">
-          Automated trophies unlocked by your real coding habits and commit milestones.
+          Automated trophies and milestone badges unlocked by your real GitHub activity (@{syncData?.user.login || "farhan0haris"}).
         </p>
       </div>
 
@@ -56,7 +73,7 @@ export default function AchievementsPage() {
             <div
               key={item.id}
               className={`glass-panel rounded-2xl p-6 transition-all ${
-                item.unlocked ? "border-[#74B4D9]/40" : "opacity-60"
+                item.unlocked ? "border-[#74B4D9]/40" : "opacity-70"
               }`}
             >
               <div

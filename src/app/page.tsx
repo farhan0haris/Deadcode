@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import GithubIcon from "@/components/icons/GithubIcon";
 import { getStoredSyncData, FullSyncData } from "@/lib/githubSync";
+import Hero3DCanvas from "@/components/canvas/Hero3DCanvas";
 
 export default function LandingPage() {
   const { data: session, status } = useSession();
@@ -40,11 +41,14 @@ export default function LandingPage() {
   }, []);
 
   const isAuthenticated = status === "authenticated" || !!localUser || !!syncedData;
-  const displayName = session?.user?.name || localUser?.name || syncedData?.user?.name || "Developer";
-  const displayHandle = syncedData?.user?.login || localUser?.username || session?.user?.email?.split("@")[0] || "user";
+  const displayName = syncedData?.user?.name || session?.user?.name || localUser?.name || "Farhan Haris";
+  const displayHandle = syncedData?.user?.login || localUser?.username || (session?.user?.email ? session.user.email.split("@")[0] : "farhan0haris");
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-between overflow-hidden px-6 py-8">
+      {/* 3D Animated Hero Background Canvas */}
+      <Hero3DCanvas />
+
       {/* Top Navbar */}
       <header className="flex w-full max-w-6xl items-center justify-between py-4 relative z-20">
         <Link href="/" className="flex items-center gap-3">

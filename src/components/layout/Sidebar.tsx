@@ -23,30 +23,20 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const navigationItems = [
-  { name: "Home", href: "/", icon: Home },
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "On This Day", href: "/today", icon: Calendar },
-  { name: "Repositories", href: "/repos", icon: FolderGit2 },
-  { name: "Timeline", href: "/timeline", icon: GitCommit },
-  { name: "Analytics", href: "/languages", icon: BarChart3 },
-  { name: "Heatmap Calendar", href: "/heatmap", icon: CalendarDays },
-  { name: "Achievements", href: "/achievements", icon: Award },
-  { name: "Yearly Retrospective", href: "/wrapped", icon: Sparkles },
-  { name: "Search", href: "/search", icon: Search },
-  { name: "Public Profile", href: "/profile/developer", icon: User },
-  { name: "Settings", href: "/settings", icon: Settings },
-];
+import { getStoredSyncData, FullSyncData } from "@/lib/githubSync";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [syncData, setSyncData] = useState<FullSyncData | null>(null);
   const [localName, setLocalName] = useState<string>("");
   const [localHandle, setLocalHandle] = useState<string>("");
 
   useEffect(() => {
+    const sync = getStoredSyncData();
+    if (sync) setSyncData(sync);
+
     const saved = localStorage.getItem("deadcode_user_profile");
     if (saved) {
       try {
@@ -57,6 +47,10 @@ export default function Sidebar() {
         // Fallback
       }
     }
+
+    const handleUpdate = () => setSyncData(getStoredSyncData());
+    window.addEventListener("deadcode_sync_updated", handleUpdate);
+    return () => window.removeEventListener("deadcode_sync_updated", handleUpdate);
   }, []);
 
   // Hide sidebar on public landing and login/register pages
@@ -64,8 +58,23 @@ export default function Sidebar() {
     return null;
   }
 
-  const displayName = session?.user?.name || localName || "Your Workspace";
-  const displayHandle = session?.user?.email ? session.user.email.split("@")[0] : localHandle || "offline";
+  const displayName = syncData?.user.name || session?.user?.name || localName || "Farhan Haris";
+  const displayHandle = syncData?.user.login || localHandle || (session?.user?.email ? session.user.email.split("@")[0] : "farhan0haris");
+
+  const navigationItems = [
+    { name: "Home", href: "/", icon: Home },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "On This Day", href: "/today", icon: Calendar },
+    { name: "Repositories", href: "/repos", icon: FolderGit2 },
+    { name: "Timeline", href: "/timeline", icon: GitCommit },
+    { name: "Analytics", href: "/languages", icon: BarChart3 },
+    { name: "Heatmap Calendar", href: "/heatmap", icon: CalendarDays },
+    { name: "Achievements", href: "/achievements", icon: Award },
+    { name: "Yearly Retrospective", href: "/wrapped", icon: Sparkles },
+    { name: "Search", href: "/search", icon: Search },
+    { name: "Public Profile", href: `/profile/${displayHandle}`, icon: User },
+    { name: "Settings", href: "/settings", icon: Settings },
+  ];
 
   return (
     <aside
@@ -110,7 +119,7 @@ export default function Sidebar() {
           {/* Navigation Links */}
           <nav className="mt-5 space-y-1 overflow-y-auto max-h-[calc(100vh-190px)] pr-1" aria-label="Main Navigation">
             {navigationItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = pathname === item.href || (item.name === "Public Profile" && pathname.startsWith("/profile"));
               const Icon = item.icon;
               return (
                 <Link
@@ -142,7 +151,7 @@ export default function Sidebar() {
           <div className="flex items-center justify-between rounded-xl border border-[#74B4D9]/20 bg-[#74B4D9]/5 p-2.5">
             <div className="flex items-center gap-3 overflow-hidden">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#10367D] to-[#1d52b5] text-[#EBEBEB] font-bold text-xs border border-[#74B4D9]/30">
-                {displayName[0]?.toUpperCase() || "U"}
+                {displayName[0]?.toUpperCase() || "F"}
               </div>
               {!isCollapsed && (
                 <div className="truncate">
@@ -157,7 +166,11 @@ export default function Sidebar() {
             </div>
             {!isCollapsed && (
               <button
-                onClick={() => signOut()}
+                onClick={() => {
+                  localStorage.removeItem("deadcode_user_profile");
+                  localStorage.removeItem("deadcode_github_synced_data");
+                  signOut();
+                }}
                 title="Sign out"
                 aria-label="Sign out of your account"
                 className="rounded-lg p-1.5 text-[#EBEBEB]/50 hover:bg-rose-500/20 hover:text-rose-400 transition-colors"
