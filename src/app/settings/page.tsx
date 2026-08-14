@@ -84,11 +84,12 @@ export default function SettingsPage() {
     }
 
     if (session?.user) {
+      const user = session.user;
       setProfile((prev) => ({
         ...prev,
-        name: session.user.name || "",
-        email: session.user.email || "",
-        username: session.user.email ? session.user.email.split("@")[0] : "",
+        name: user.name || "",
+        email: user.email || "",
+        username: user.email ? user.email.split("@")[0] : "",
       }));
     }
   }, [session]);
