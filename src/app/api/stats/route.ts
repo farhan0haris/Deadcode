@@ -1,21 +1,23 @@
-import { NextResponse } from "next/server";
+import { successResponse, errorResponse } from "@/lib/apiResponse";
 
 export async function GET() {
-  return NextResponse.json({
-    totalRepositories: 87,
-    totalCommits: 14291,
-    totalAdditions: 284120,
-    totalDeletions: 94100,
-    currentStreak: 19,
-    longestStreak: 19,
-    primaryLanguage: "TypeScript",
-    nightOwlPercentage: 42,
-    mostProductiveDay: "Tuesday",
-    languages: [
-      { name: "TypeScript", percentage: 65, color: "#7C5CFC", count: 89420 },
-      { name: "Python", percentage: 20, color: "#10B981", count: 34110 },
-      { name: "React / TSX", percentage: 10, color: "#3B82F6", count: 14900 },
-      { name: "CSS / SCSS", percentage: 5, color: "#F59E0B", count: 6200 },
-    ],
-  });
+  try {
+    const statsData = {
+      totalRepositories: 6,
+      currentStreak: 13,
+      longestStreak: 19,
+      primaryLanguage: "TypeScript",
+      nightOwlPercentage: 42,
+      mostProductiveDay: "Wednesday",
+      languages: [
+        { name: "TypeScript", percentage: 67, color: "#74B4D9", count: 4 },
+        { name: "JavaScript", percentage: 17, color: "#1d52b5", count: 1 },
+        { name: "Other", percentage: 17, color: "#10367D", count: 1 },
+      ],
+    };
+
+    return successResponse(statsData);
+  } catch (error: any) {
+    return errorResponse(error, "Failed to retrieve developer statistics.");
+  }
 }

@@ -1,21 +1,35 @@
 import { NextResponse } from "next/server";
 import { Octokit } from "@octokit/rest";
+import { syncPayloadSchema } from "@/lib/validations";
+import { successResponse, errorResponse } from "@/lib/apiResponse";
+import { securityLogger } from "@/lib/logger";
 
 export async function POST(request: Request) {
   try {
-    let body: any = {};
-    try {
-      body = await request.json();
-    } catch {
-      // Body might be empty
+    let rawBody: any = {};
+    const contentType = request.headers.get("content-type");
+    if (contentType?.includes("application/json")) {
+      try {
+        rawBody = await request.json();
+      } catch {
+        return errorResponse(new Error("Malformed JSON payload in request body."), "Invalid JSON payload", 400);
+      }
     }
 
+    // Strict schema validation
+    const validation = syncPayloadSchema.safeParse(rawBody);
+    if (!validation.success) {
+      return errorResponse(validation.error);
+    }
+
+    const { username: validatedUsername, token: validatedToken } = validation.data;
     const authHeader = request.headers.get("authorization");
-    const token = body?.token || authHeader?.replace("Bearer ", "") || process.env.GITHUB_TOKEN;
-    const username = body?.username?.trim()?.replace(/^@/, "");
+    const headerToken = authHeader?.startsWith("Bearer ") ? authHeader.substring(7).trim() : undefined;
+    const token = validatedToken || headerToken || process.env.GITHUB_TOKEN;
+    const username = validatedUsername?.trim()?.replace(/^@/, "");
 
     const octokit = new Octokit({
-      auth: token || undefined,
+      auth: token && token !== "placeholder_github_token" ? token : undefined,
     });
 
     let rawRepos: any[] = [];
@@ -33,7 +47,7 @@ export async function POST(request: Request) {
         });
         rawRepos = repos;
       } catch {
-        // Fallback to username fetch if token is restricted
+        // Fallback to username fetch if token is invalid/restricted
       }
     }
 
@@ -49,41 +63,47 @@ export async function POST(request: Request) {
         });
         rawRepos = repos;
       } catch (err: any) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: `Could not find GitHub user '@${username}'. Please check the username and try again.`,
-          },
-          { status: 404 }
-        );
+        if (err.status === 404) {
+          return errorResponse(
+            new Error(`Could not find GitHub user '@${username}'. Please verify the username.`),
+            "GitHub user not found",
+            404
+          );
+        }
+        if (err.status === 403) {
+          return errorResponse(
+            new Error("GitHub API rate limit reached. Please configure a Personal Access Token in Settings."),
+            "GitHub rate limit reached",
+            429
+          );
+        }
+        throw err;
       }
     }
 
-    // If still no repos and no username provided, return graceful response
+    // If still no repos and no username provided
     if (rawRepos.length === 0 && !username) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Please provide a GitHub username or Personal Access Token to synchronize.",
-        },
-        { status: 400 }
+      return errorResponse(
+        new Error("Please provide a valid GitHub username or Personal Access Token to synchronize."),
+        "Missing GitHub username or token",
+        400
       );
     }
 
-    // 3. Process and format repositories
+    // 3. Process and format repositories safely
     const repos = rawRepos.map((repo: any) => ({
       id: String(repo.id),
-      name: repo.name,
-      fullName: repo.full_name,
-      description: repo.description || "No description provided.",
-      language: repo.language || "Other",
-      stars: repo.stargazers_count || 0,
-      forks: repo.forks_count || 0,
-      isPrivate: repo.private || false,
-      htmlUrl: repo.html_url,
-      updatedAt: repo.updated_at,
-      defaultBranch: repo.default_branch,
-      size: repo.size || 0,
+      name: String(repo.name).slice(0, 100),
+      fullName: String(repo.full_name).slice(0, 150),
+      description: repo.description ? String(repo.description).slice(0, 500) : "No description provided.",
+      language: repo.language ? String(repo.language).slice(0, 50) : "Other",
+      stars: typeof repo.stargazers_count === "number" ? Math.max(0, repo.stargazers_count) : 0,
+      forks: typeof repo.forks_count === "number" ? Math.max(0, repo.forks_count) : 0,
+      isPrivate: Boolean(repo.private),
+      htmlUrl: repo.html_url && String(repo.html_url).startsWith("https://github.com/") ? repo.html_url : `https://github.com/${username || "user"}`,
+      updatedAt: repo.updated_at || new Date().toISOString(),
+      defaultBranch: repo.default_branch ? String(repo.default_branch).slice(0, 50) : "main",
+      size: typeof repo.size === "number" ? Math.max(0, repo.size) : 0,
     }));
 
     // 4. Calculate Language Distribution
@@ -96,7 +116,7 @@ export async function POST(request: Request) {
 
     const totalLangRepos = Object.values(langCounts).reduce((a, b) => a + b, 0) || 1;
     const colors = ["#74B4D9", "#10367D", "#1d52b5", "#8ec7e8", "#5a9fc2", "#a5d5f2"];
-    
+
     const languages = Object.entries(langCounts)
       .map(([name, count], index) => ({
         name,
@@ -106,26 +126,31 @@ export async function POST(request: Request) {
       }))
       .sort((a, b) => b.value - a.value);
 
-    // Primary language
     const primaryTech = languages[0]?.name || "TypeScript";
     const primaryPercent = languages[0]?.value || 100;
-
-    // Estimate commit volume and total stars
     const totalStars = repos.reduce((acc, r) => acc + r.stars, 0);
     const totalForks = repos.reduce((acc, r) => acc + r.forks, 0);
-    const estimatedCommits = repos.reduce((acc, r) => acc + Math.max(r.size > 0 ? Math.floor(r.size / 3) : 10, 5), 0);
+    const estimatedCommits = repos.reduce(
+      (acc, r) => acc + Math.max(r.size > 0 ? Math.floor(r.size / 3) : 10, 5),
+      0
+    );
 
-    return NextResponse.json({
-      success: true,
+    securityLogger.log({
+      event: "SYNC_EVENT",
+      user: userInfo?.login || username,
+      details: { reposCount: repos.length },
+    });
+
+    return successResponse({
       message: `Successfully synchronized ${repos.length} repositories for @${userInfo?.login || username}.`,
       user: {
         login: userInfo?.login || username,
         name: userInfo?.name || userInfo?.login || username,
-        avatarUrl: userInfo?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${username}`,
-        bio: userInfo?.bio || "",
-        publicRepos: userInfo?.public_repos || repos.length,
-        followers: userInfo?.followers || 0,
-        following: userInfo?.following || 0,
+        avatarUrl: userInfo?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(username || "dev")}`,
+        bio: userInfo?.bio ? String(userInfo.bio).slice(0, 300) : "",
+        publicRepos: typeof userInfo?.public_repos === "number" ? userInfo.public_repos : repos.length,
+        followers: typeof userInfo?.followers === "number" ? userInfo.followers : 0,
+        following: typeof userInfo?.following === "number" ? userInfo.following : 0,
         htmlUrl: userInfo?.html_url || `https://github.com/${username}`,
       },
       stats: {
@@ -142,12 +167,6 @@ export async function POST(request: Request) {
       syncedAt: new Date().toISOString(),
     });
   } catch (error: any) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: error?.message || "Failed to synchronize GitHub repositories.",
-      },
-      { status: 500 }
-    );
+    return errorResponse(error, "Failed to synchronize GitHub repositories.");
   }
 }

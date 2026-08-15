@@ -64,8 +64,13 @@ export default function LoginPage() {
         setIsLoading(false);
         return;
       }
-      if (formData.password.length < 6) {
-        setErrorMsg("Password must be at least 6 characters.");
+      if (formData.password.length < 8) {
+        setErrorMsg("Password must be at least 8 characters.");
+        setIsLoading(false);
+        return;
+      }
+      if (!/^[a-zA-Z0-9_-]{1,39}$/.test(formData.username || "")) {
+        setErrorMsg("Username must be 1-39 alphanumeric characters.");
         setIsLoading(false);
         return;
       }
