@@ -49,6 +49,24 @@ model User {
   sessions     Session[]
   repositories Repository[]
   achievements Achievement[]
+  settings     UserSettings?
+  chatThreads  ChatThread[]
+}
+
+enum PrivacyMode {
+  LOCAL
+  CLOUD
+}
+
+model UserSettings {
+  id              String      @id @default(cuid())
+  userId          String      @unique
+  privacyMode     PrivacyMode @default(LOCAL)
+  geminiApiKey    String?
+  ollamaBaseUrl   String      @default("http://localhost:11434")
+  ollamaModel     String      @default("llama3.2")
+  enableAiMemory  Boolean     @default(true)
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -76,8 +94,10 @@ model Repository {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  commits Commit[]
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  commits      Commit[]
+  chatThreads  ChatThread[]
+  auditReports CodeAuditReport[]
 
   @@unique([userId, githubRepoId])
   @@index([userId])
@@ -119,3 +139,46 @@ model Achievement {
   @@unique([userId, key])
   @@index([userId])
 }
+
+model ChatThread {
+  id           String        @id @default(cuid())
+  userId       String
+  repositoryId String?
+  title        String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  messages     ChatMessage[]
+
+  repository Repository? @relation(fields: [repositoryId], references: [id], onDelete: SetNull)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([repositoryId])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  threadId  String
+  role      String   // "user" | "assistant" | "system"
+  content   String   @db.Text
+  citations Json?    // Array of { file, lines, score }
+  createdAt DateTime @default(now())
+
+  thread ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+}
+
+model CodeAuditReport {
+  id           String   @id @default(cuid())
+  repositoryId String
+  summary      String   @db.Text
+  score        Int      @default(85)
+  issues       Json     // Array of { title, severity, category, file, line, description, codeSnippet }
+  createdAt    DateTime @default(now())
+
+  repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  @@index([repositoryId])
+}
+
