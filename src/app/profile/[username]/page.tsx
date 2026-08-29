@@ -23,7 +23,7 @@ export default function ProfilePage({
     return () => window.removeEventListener("deadcode_sync_updated", handleUpdate);
   }, []);
 
-  const displayHandle = syncData?.user.login || (username === "developer" ? "farhan0haris" : username);
+  const displayHandle = syncData?.user.login || username;
   const displayName = syncData?.user.name || displayHandle;
   const avatarUrl = syncData?.user.avatarUrl || `https://avatars.githubusercontent.com/u/187423461?v=4`;
   const reposCount = syncData?.stats.reposCount || 6;

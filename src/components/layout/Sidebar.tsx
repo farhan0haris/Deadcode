@@ -59,7 +59,7 @@ export default function Sidebar() {
   }
 
   const displayName = syncData?.user.name || session?.user?.name || localName || "Farhan Haris";
-  const displayHandle = syncData?.user.login || localHandle || (session?.user?.email ? session.user.email.split("@")[0] : "farhan0haris");
+  const displayHandle = syncData?.user.login || localHandle || (session?.user?.email ? session.user.email.split("@")[0] : "developer");
 
   const navigationItems = [
     { name: "Home", href: "/", icon: Home },

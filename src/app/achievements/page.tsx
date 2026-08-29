@@ -62,7 +62,7 @@ export default function AchievementsPage() {
           Achievements & Badges
         </h1>
         <p className="text-xs text-[#EBEBEB]/70 font-medium">
-          Automated trophies and milestone badges unlocked by your real GitHub activity (@{syncData?.user.login || "farhan0haris"}).
+          Automated trophies and milestone badges unlocked by your real GitHub activity{syncData?.user.login ? ` (@${syncData.user.login})` : ""}.
         </p>
       </div>
 

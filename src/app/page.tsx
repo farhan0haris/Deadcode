@@ -42,7 +42,7 @@ export default function LandingPage() {
 
   const isAuthenticated = status === "authenticated" || !!localUser || !!syncedData;
   const displayName = syncedData?.user?.name || session?.user?.name || localUser?.name || "Farhan Haris";
-  const displayHandle = syncedData?.user?.login || localUser?.username || (session?.user?.email ? session.user.email.split("@")[0] : "farhan0haris");
+  const displayHandle = syncedData?.user?.login || localUser?.username || (session?.user?.email ? session.user.email.split("@")[0] : "developer");
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-between overflow-hidden px-6 py-8">
