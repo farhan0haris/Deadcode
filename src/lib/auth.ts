@@ -78,12 +78,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/login",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account, profile }) {
       if (user) {
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
         token.picture = user.image;
+      }
+      if (account?.access_token) {
+        token.accessToken = account.access_token;
+      }
+      if (profile && (profile as any).login) {
+        token.githubLogin = (profile as any).login;
       }
       return token;
     },
@@ -93,6 +99,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.image = token.picture as string;
+        (session.user as any).accessToken = token.accessToken as string | undefined;
+        (session.user as any).githubLogin = token.githubLogin as string | undefined;
       }
       return session;
     },

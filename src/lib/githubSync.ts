@@ -70,8 +70,13 @@ export function saveSyncData(data: FullSyncData): void {
 
 export async function triggerGitHubSync(username?: string, token?: string): Promise<FullSyncData> {
   const storedProfile = typeof window !== "undefined" ? localStorage.getItem("deadcode_user_profile") : null;
+  const storedSync = getStoredSyncData();
   let parsedUsername = username;
   let parsedToken = token;
+
+  if (!parsedUsername && storedSync?.user?.login) {
+    parsedUsername = storedSync.user.login;
+  }
 
   if (!parsedUsername && storedProfile) {
     try {
@@ -84,10 +89,6 @@ export async function triggerGitHubSync(username?: string, token?: string): Prom
 
   if (!parsedToken && typeof window !== "undefined") {
     parsedToken = localStorage.getItem("deadcode_github_pat") || undefined;
-  }
-
-  if (!parsedUsername && !parsedToken) {
-    throw new Error("Please provide your GitHub username or token.");
   }
 
   const response = await fetch("/api/sync", {
@@ -103,7 +104,7 @@ export async function triggerGitHubSync(username?: string, token?: string): Prom
 
   const resJson = await response.json();
   if (!response.ok || !resJson.success) {
-    throw new Error(resJson.error || "Failed to sync GitHub account.");
+    throw new Error(resJson.error || "Failed to synchronize GitHub account.");
   }
 
   const syncData: FullSyncData = {

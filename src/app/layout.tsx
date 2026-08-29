@@ -5,6 +5,7 @@ import ThemeProvider from "@/components/providers/ThemeProvider";
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
 import BackgroundCanvas from "@/components/canvas/BackgroundCanvas";
+import AutoSyncHandler from "@/components/AutoSyncHandler";
 
 export const metadata: Metadata = {
   title: "DeadCode — Every commit has a ghost",
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-[#091836] text-[#EBEBEB] antialiased selection:bg-[#74B4D9]/30 selection:text-[#EBEBEB]">
         <ThemeProvider attribute="class" forcedTheme="dark">
           <AuthProvider>
+            <AutoSyncHandler />
             <BackgroundCanvas />
             <div className="relative z-10 flex min-h-screen bg-[#091836] text-[#EBEBEB]">
               <Sidebar />

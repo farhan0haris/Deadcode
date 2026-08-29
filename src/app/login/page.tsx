@@ -18,6 +18,7 @@ import {
   Home,
 } from "lucide-react";
 import GithubIcon from "@/components/icons/GithubIcon";
+import { triggerGitHubSync } from "@/lib/githubSync";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -156,8 +157,15 @@ export default function LoginPage() {
       password: "github_oauth_session_token",
     });
 
-    setSuccessMsg(`Connected as @${handle}! Loading dashboard...`);
+    setSuccessMsg(`Connected as @${handle}! Synchronizing workspace...`);
     setShowGithubModal(false);
+
+    try {
+      await triggerGitHubSync(handle);
+    } catch {
+      // Graceful fallback
+    }
+
     setTimeout(() => {
       router.push("/dashboard");
     }, 600);
