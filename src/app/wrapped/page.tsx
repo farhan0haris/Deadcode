@@ -71,7 +71,7 @@ export default function WrappedPage() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-8 pl-72">
+    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
       <div className="glass-panel relative flex w-full max-w-xl flex-col items-center justify-between rounded-3xl p-10 border border-[#74B4D9]/25 text-center shadow-2xl overflow-hidden min-h-[480px]">
         {/* Background Ambient Glow */}
         <div

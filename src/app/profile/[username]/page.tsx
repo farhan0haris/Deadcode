@@ -32,7 +32,7 @@ export default function ProfilePage({
   const primaryTech = syncData?.stats.primaryTech || "TypeScript";
 
   return (
-    <div className="space-y-8 p-8 pl-72">
+    <div className="mx-auto w-full max-w-7xl space-y-8 p-4 sm:p-6 lg:p-8">
       {/* Navigation Back */}
       <Link
         href="/dashboard"

@@ -22,7 +22,7 @@ export default function Error({
       : "An unexpected system error occurred. Our team has been notified.";
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-8 pl-72 text-center">
+    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4 sm:p-6 lg:p-8 text-center">
       <div className="glass-panel max-w-md rounded-3xl p-8 space-y-4 border border-[#74B4D9]/25 shadow-2xl">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
           <AlertTriangle className="h-7 w-7" />

@@ -110,7 +110,7 @@ export default function AuditPage() {
   const repos = syncData?.repos || [];
 
   return (
-    <div className="min-h-screen bg-[#071330] text-[#EBEBEB] p-6 lg:p-10 space-y-8 font-sans">
+    <div className="mx-auto w-full max-w-7xl space-y-8 p-4 sm:p-6 lg:p-8 font-sans">
       <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-[#10367D]/40 backdrop-blur-xl p-6 rounded-2xl border border-[#74B4D9]/20 shadow-xl">
         <div className="space-y-1">
           <Link href="/dashboard" className="text-xs font-bold text-[#74B4D9] hover:underline flex items-center gap-1">

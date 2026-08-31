@@ -160,7 +160,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="space-y-8 p-8 pl-72 transition-colors">
+    <div className="mx-auto w-full max-w-7xl space-y-8 p-4 sm:p-6 lg:p-8 transition-colors">
       {/* Toast Alert */}
       {toastMessage && (
         <div className="fixed bottom-8 right-8 z-50 flex items-center gap-3 rounded-2xl border border-[#74B4D9]/40 bg-[#0d2452] p-4 text-xs font-bold text-[#EBEBEB] shadow-2xl shadow-black/80 backdrop-blur-xl animate-in slide-in-from-bottom-4">

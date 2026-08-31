@@ -115,7 +115,7 @@ export default function ChatPage() {
   const repos = syncData?.repos || [];
 
   return (
-    <div className="flex h-screen bg-[#071330] text-[#EBEBEB] font-sans overflow-hidden">
+    <div className="flex h-[calc(100vh-4rem)] bg-[#071330] text-[#EBEBEB] font-sans overflow-hidden">
       {/* Sidebar */}
       <aside className="w-80 bg-[#0A1A3F]/90 border-r border-[#74B4D9]/20 flex flex-col p-4 space-y-4 hidden md:flex">
         <div className="flex items-center justify-between">

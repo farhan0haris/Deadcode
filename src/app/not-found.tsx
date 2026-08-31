@@ -3,7 +3,7 @@ import { Ghost, ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-8 pl-72 text-center">
+    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4 sm:p-6 lg:p-8 text-center">
       <div className="glass-panel max-w-md rounded-2xl p-8 space-y-4">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-600/10 text-violet-500">
           <Ghost className="h-6 w-6" />

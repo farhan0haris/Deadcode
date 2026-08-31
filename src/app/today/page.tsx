@@ -33,7 +33,7 @@ export default function OnThisDayPage() {
   };
 
   return (
-    <div className="space-y-8 p-8 pl-72">
+    <div className="mx-auto w-full max-w-7xl space-y-8 p-4 sm:p-6 lg:p-8">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
