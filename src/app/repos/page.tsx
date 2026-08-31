@@ -84,7 +84,7 @@ export default function RepositoriesPage() {
   );
 
   return (
-    <div className="space-y-8 p-8 pl-72">
+    <div className="space-y-8 p-6 lg:p-10">
       {/* Header & Actions */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>

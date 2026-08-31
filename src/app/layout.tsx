@@ -27,7 +27,7 @@ export default function RootLayout({
             <BackgroundCanvas />
             <div className="relative z-10 flex min-h-screen bg-[#091836] text-[#EBEBEB]">
               <Sidebar />
-              <div className="flex flex-1 flex-col">
+              <div className="flex flex-1 flex-col transition-all duration-300 lg:pl-64">
                 <Header />
                 <main className="flex-1">{children}</main>
               </div>

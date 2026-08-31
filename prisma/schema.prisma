@@ -42,6 +42,11 @@ model User {
   image          String?
   githubId       String?       @unique
   githubUsername String?
+  bio            String?
+  githubUrl      String?
+  publicRepos    Int?          @default(0)
+  followers      Int?          @default(0)
+  following      Int?          @default(0)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
@@ -90,6 +95,7 @@ model Repository {
   isPrivate     Boolean   @default(false)
   defaultBranch String    @default("main")
   githubUrl     String
+  topics        Json?
   syncedAt      DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

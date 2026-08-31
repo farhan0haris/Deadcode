@@ -118,57 +118,13 @@ export default function LoginPage() {
 
   const handleGithubClick = async () => {
     setIsLoading(true);
+    setErrorMsg("");
     try {
-      const res = await signIn("github", { callbackUrl: "/dashboard", redirect: false });
-      if (res?.error) {
-        // If OAuth credentials aren't configured in GitHub Developer settings yet, show GitHub Handle Direct Connect
-        setShowGithubModal(true);
-      } else {
-        router.push("/dashboard");
-      }
+      await signIn("github", { callbackUrl: "/dashboard" });
     } catch {
-      setShowGithubModal(true);
-    } finally {
+      setErrorMsg("Failed to connect to GitHub OAuth. Please try again.");
       setIsLoading(false);
     }
-  };
-
-  const handleGithubDirectConnect = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!githubHandleInput.trim()) return;
-    setIsLoading(true);
-
-    const handle = githubHandleInput.trim().replace(/^@/, "");
-    localStorage.setItem(
-      "deadcode_user_profile",
-      JSON.stringify({
-        name: handle,
-        username: handle,
-        email: `${handle}@users.noreply.github.com`,
-        github: handle,
-      })
-    );
-
-    await signIn("credentials", {
-      redirect: false,
-      name: handle,
-      username: handle,
-      email: `${handle}@users.noreply.github.com`,
-      password: "github_oauth_session_token",
-    });
-
-    setSuccessMsg(`Connected as @${handle}! Synchronizing workspace...`);
-    setShowGithubModal(false);
-
-    try {
-      await triggerGitHubSync(handle);
-    } catch {
-      // Graceful fallback
-    }
-
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 600);
   };
 
   const handleDemoLogin = async () => {
@@ -457,59 +413,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* GitHub Direct Handle Connect Modal */}
-      {showGithubModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#091836]/80 backdrop-blur-md">
-          <div className="w-full max-w-md rounded-3xl border border-[#74B4D9]/30 bg-[#0d2452] p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#10367D] text-[#74B4D9] border border-[#74B4D9]/30">
-                <GithubIcon className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-black text-[#EBEBEB]">GitHub Quick Sync</h3>
-                <p className="text-[11px] text-[#EBEBEB]/70">Enter your GitHub username to connect your repositories.</p>
-              </div>
-            </div>
-
-            <form onSubmit={handleGithubDirectConnect} className="space-y-3">
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#EBEBEB]/70 mb-1">
-                  Your GitHub Username
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#74B4D9]">@</span>
-                  <input
-                    type="text"
-                    required
-                    autoFocus
-                    value={githubHandleInput}
-                    onChange={(e) => setGithubHandleInput(e.target.value)}
-                    placeholder="your_github_handle"
-                    className="h-10 w-full rounded-xl border border-[#74B4D9]/25 bg-[#091836] pl-8 pr-4 text-xs font-bold text-[#EBEBEB] placeholder-[#EBEBEB]/30 focus:border-[#74B4D9] focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowGithubModal(false)}
-                  className="flex-1 rounded-xl border border-[#74B4D9]/20 bg-[#74B4D9]/5 py-2.5 text-xs font-bold text-[#EBEBEB] hover:bg-[#74B4D9]/10"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isLoading || !githubHandleInput.trim()}
-                  className="flex-1 rounded-xl bg-gradient-to-r from-[#10367D] via-[#1647a3] to-[#74B4D9] py-2.5 text-xs font-black text-[#EBEBEB] shadow-md border border-[#74B4D9]/40 hover:scale-105 transition-all disabled:opacity-50"
-                >
-                  Connect & Sign In
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

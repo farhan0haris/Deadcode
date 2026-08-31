@@ -3,30 +3,33 @@ import { Octokit } from "@octokit/rest";
 import { syncPayloadSchema } from "@/lib/validations";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
 import { securityLogger } from "@/lib/logger";
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
+    const session = await auth();
     let rawBody: any = {};
     const contentType = request.headers.get("content-type");
     if (contentType?.includes("application/json")) {
       try {
         rawBody = await request.json();
       } catch {
-        return errorResponse(new Error("Malformed JSON payload in request body."), "Invalid JSON payload", 400);
+        // payload is optional
       }
     }
 
-    // Strict schema validation
     const validation = syncPayloadSchema.safeParse(rawBody);
-    if (!validation.success) {
-      return errorResponse(validation.error);
-    }
+    const { username: validatedUsername, token: validatedToken } = validation.success ? validation.data : { username: undefined, token: undefined };
 
-    const { username: validatedUsername, token: validatedToken } = validation.data;
     const authHeader = request.headers.get("authorization");
     const headerToken = authHeader?.startsWith("Bearer ") ? authHeader.substring(7).trim() : undefined;
-    const token = validatedToken || headerToken || process.env.GITHUB_TOKEN;
-    const username = validatedUsername?.trim()?.replace(/^@/, "");
+    const sessionAccessToken = (session?.user as any)?.accessToken;
+    const sessionGithubLogin = (session?.user as any)?.githubLogin;
+    const sessionUserId = session?.user?.id;
+
+    const token = validatedToken || sessionAccessToken || headerToken || process.env.GITHUB_TOKEN;
+    const username = (validatedUsername?.trim()?.replace(/^@/, "") || sessionGithubLogin || session?.user?.name || "").trim();
 
     const octokit = new Octokit({
       auth: token && token !== "placeholder_github_token" ? token : undefined,
@@ -35,7 +38,7 @@ export async function POST(request: Request) {
     let rawRepos: any[] = [];
     let userInfo: any = null;
 
-    // 1. If we have a Personal Access Token or OAuth token, fetch authenticated user's repos
+    // 1. Fetch authenticated user's repos if token is available
     if (token && token !== "placeholder_github_token") {
       try {
         const { data: user } = await octokit.rest.users.getAuthenticated();
@@ -47,11 +50,11 @@ export async function POST(request: Request) {
         });
         rawRepos = repos;
       } catch {
-        // Fallback to username fetch if token is invalid/restricted
+        // Fallback
       }
     }
 
-    // 2. If no token or if username was explicitly passed, fetch public repos for that username
+    // 2. Fallback to public repos by username if token fetching returned no repos
     if (rawRepos.length === 0 && username) {
       try {
         const { data: user } = await octokit.rest.users.getByUsername({ username });
@@ -72,7 +75,7 @@ export async function POST(request: Request) {
         }
         if (err.status === 403) {
           return errorResponse(
-            new Error("GitHub API rate limit reached. Please configure a Personal Access Token in Settings."),
+            new Error("GitHub API rate limit reached. Please configure a GitHub Token or sign in with GitHub."),
             "GitHub rate limit reached",
             429
           );
@@ -81,18 +84,18 @@ export async function POST(request: Request) {
       }
     }
 
-    // If still no repos and no username provided
     if (rawRepos.length === 0 && !username) {
       return errorResponse(
-        new Error("Please provide a valid GitHub username or Personal Access Token to synchronize."),
+        new Error("Please sign in with GitHub or provide a valid GitHub username to synchronize."),
         "Missing GitHub username or token",
         400
       );
     }
 
-    // 3. Process and format repositories safely
+    // 3. Safe Repository Formatter
     const repos = rawRepos.map((repo: any) => ({
       id: String(repo.id),
+      githubRepoId: repo.id,
       name: String(repo.name).slice(0, 100),
       fullName: String(repo.full_name).slice(0, 150),
       description: repo.description ? String(repo.description).slice(0, 500) : "No description provided.",
@@ -103,10 +106,104 @@ export async function POST(request: Request) {
       htmlUrl: repo.html_url && String(repo.html_url).startsWith("https://github.com/") ? repo.html_url : `https://github.com/${username || "user"}`,
       updatedAt: repo.updated_at || new Date().toISOString(),
       defaultBranch: repo.default_branch ? String(repo.default_branch).slice(0, 50) : "main",
+      topics: repo.topics || [],
       size: typeof repo.size === "number" ? Math.max(0, repo.size) : 0,
     }));
 
-    // 4. Calculate Language Distribution
+    // 4. PostgreSQL Database Upsert via Prisma
+    let targetUserId = sessionUserId;
+    const resolvedUsername = userInfo?.login || username;
+    const resolvedEmail = userInfo?.email || session?.user?.email || `${resolvedUsername}@users.noreply.github.com`;
+
+    if (targetUserId) {
+      await prisma.user.update({
+        where: { id: targetUserId },
+        data: {
+          githubUsername: resolvedUsername,
+          githubId: userInfo?.id ? String(userInfo.id) : undefined,
+          name: userInfo?.name || session?.user?.name || resolvedUsername,
+          image: userInfo?.avatar_url || session?.user?.image,
+          bio: userInfo?.bio || null,
+          githubUrl: userInfo?.html_url || `https://github.com/${resolvedUsername}`,
+          publicRepos: typeof userInfo?.public_repos === "number" ? userInfo.public_repos : repos.length,
+          followers: typeof userInfo?.followers === "number" ? userInfo.followers : 0,
+          following: typeof userInfo?.following === "number" ? userInfo.following : 0,
+        },
+      }).catch(() => {});
+    } else {
+      let dbUser = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { githubUsername: resolvedUsername },
+            { email: resolvedEmail },
+          ],
+        },
+      });
+
+      if (!dbUser) {
+        dbUser = await prisma.user.create({
+          data: {
+            email: resolvedEmail,
+            name: userInfo?.name || resolvedUsername,
+            githubUsername: resolvedUsername,
+            githubId: userInfo?.id ? String(userInfo.id) : undefined,
+            image: userInfo?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(resolvedUsername)}`,
+            bio: userInfo?.bio || null,
+            githubUrl: userInfo?.html_url || `https://github.com/${resolvedUsername}`,
+            publicRepos: typeof userInfo?.public_repos === "number" ? userInfo.public_repos : repos.length,
+            followers: typeof userInfo?.followers === "number" ? userInfo.followers : 0,
+            following: typeof userInfo?.following === "number" ? userInfo.following : 0,
+          },
+        });
+      }
+      targetUserId = dbUser.id;
+    }
+
+    // Upsert repositories into PostgreSQL to prevent duplicates
+    if (targetUserId) {
+      for (const repo of repos) {
+        await prisma.repository.upsert({
+          where: {
+            userId_githubRepoId: {
+              userId: targetUserId,
+              githubRepoId: repo.githubRepoId,
+            },
+          },
+          update: {
+            name: repo.name,
+            fullName: repo.fullName,
+            description: repo.description,
+            language: repo.language,
+            stars: repo.stars,
+            forks: repo.forks,
+            isPrivate: repo.isPrivate,
+            defaultBranch: repo.defaultBranch,
+            githubUrl: repo.htmlUrl,
+            topics: repo.topics,
+            syncedAt: new Date(),
+          },
+          create: {
+            userId: targetUserId,
+            githubRepoId: repo.githubRepoId,
+            name: repo.name,
+            fullName: repo.fullName,
+            description: repo.description,
+            language: repo.language,
+            stars: repo.stars,
+            forks: repo.forks,
+            isPrivate: repo.isPrivate,
+            defaultBranch: repo.defaultBranch,
+            githubUrl: repo.htmlUrl,
+            topics: repo.topics,
+            syncedAt: new Date(),
+          },
+        }).catch((err) => {
+          console.warn(`Prisma repository upsert warning for ${repo.name}:`, err.message);
+        });
+      }
+    }
+
+    // 5. Calculate Language Distribution
     const langCounts: Record<string, number> = {};
     repos.forEach((r) => {
       if (r.language) {

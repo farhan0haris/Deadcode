@@ -58,7 +58,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-[#74B4D9]/15 bg-[#091836]/90 px-6 backdrop-blur-2xl transition-colors pl-72">
+      <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-[#74B4D9]/15 bg-[#091836]/90 px-6 backdrop-blur-2xl transition-colors">
         {/* Left: Home Navigation & Breadcrumbs */}
         <div className="flex items-center gap-3">
           <Link
