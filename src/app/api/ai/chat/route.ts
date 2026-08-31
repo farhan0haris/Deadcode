@@ -42,8 +42,8 @@ export async function POST(req: Request) {
         `3. **Security & Privacy**: Running in **${privacyMode}** mode. Your data preferences are strictly enforced.`,
       citations: [
         { file: "src/app/chat/page.tsx", lines: "15-80", relevance: 0.96 },
-        { file: "backend/main.py", lines": "35-70", relevance": 0.88 },
-        { file: "prisma/schema.prisma", lines": "10-45", relevance": 0.81 }
+        { file: "backend/main.py", lines: "35-70", relevance: 0.88 },
+        { file: "prisma/schema.prisma", lines: "10-45", relevance: 0.81 }
       ],
       mode: privacyMode,
       model: privacyMode === "CLOUD" ? "gemini-2.5-flash" : "llama3.2"

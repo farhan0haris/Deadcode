@@ -8,12 +8,12 @@ import {
   ShieldCheck, 
   AlertTriangle, 
   Bug, 
-  Github, 
   ArrowLeft, 
   RefreshCw, 
   Inbox,
   FolderGit2
 } from "lucide-react";
+import GithubIcon from "@/components/icons/GithubIcon";
 
 interface AuditIssue {
   id: string;
@@ -233,7 +233,7 @@ export default function AuditPage() {
                         disabled={issueStatus[issue.id] === "creating" || issueStatus[issue.id] === "done"}
                         className="px-3.5 py-1.5 bg-[#10367D] hover:bg-[#74B4D9] hover:text-[#0A1A3F] border border-[#74B4D9]/40 text-xs font-bold rounded-xl transition-all flex items-center gap-2 disabled:opacity-50"
                       >
-                        <Github className="w-3.5 h-3.5" />
+                        <GithubIcon className="w-3.5 h-3.5" />
                         {issueStatus[issue.id] === "creating" ? "Generating Issue..." : issueStatus[issue.id] === "done" ? "GitHub Issue Created ✓" : "Create GitHub Issue"}
                       </button>
                     </div>
